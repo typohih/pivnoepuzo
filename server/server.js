@@ -135,7 +135,12 @@ function normalizeProduct(body, imageUrl) {
 
 export function createApp() {
   const app = express();
-
+  app.use(cors({
+  origin: [
+    "https://pivnoepuzo.vercel.app",
+    "http://localhost:5173"
+  ]
+}));
   app.use(cors({ origin: allowedOrigins }));
   app.use(express.json({ limit: "10mb" }));
   app.use("/uploads", express.static(uploadsDir));
