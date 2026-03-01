@@ -148,7 +148,6 @@ export function createApp() {
   },
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 }));
-app.options("/*", cors());
   app.use(express.json({ limit: "10mb" }));
   app.use("/uploads", express.static(uploadsDir));
 
