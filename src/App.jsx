@@ -47,18 +47,6 @@ export function App() {
     <div className="app">
       <div className="app__shell">
         <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-        <section className="app__health-panel">
-          <h2 className="app__health-title">API Health</h2>
-          <pre className="app__health-output">
-            {healthError
-              ? `Error: ${healthError}`
-              : JSON.stringify(
-                  healthData ?? { loading: true },
-                  null,
-                  2,
-                )}
-          </pre>
-        </section>
         <Main searchQuery={searchQuery} />
         <Footer />
       </div>
