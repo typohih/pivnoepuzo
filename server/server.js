@@ -136,12 +136,19 @@ function normalizeProduct(body, imageUrl) {
 export function createApp() {
   const app = express();
   app.use(cors({
-  origin: [
-    "https://pivnoepuzo.vercel.app",
-    "http://localhost:5173"
-  ]
+  origin(origin, callback) {
+    // запросы без Origin (например, из браузера напрямую, health-checks) — разрешаем
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 }));
-  app.use(cors({ origin: allowedOrigins }));
+app.options("*", cors());
   app.use(express.json({ limit: "10mb" }));
   app.use("/uploads", express.static(uploadsDir));
 
