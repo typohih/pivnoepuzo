@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { apiFetch, assetUrl } from "../../api.js";
 import "./Main.css";
 
 const emptyForm = {
@@ -77,7 +78,7 @@ export function Main({ searchQuery }) {
     setCatalogError("");
 
     try {
-      const response = await fetch("/api/products");
+      const response = await apiFetch("/api/products");
       if (!response.ok) {
         throw new Error("Failed to load catalog");
       }
@@ -200,7 +201,7 @@ export function Main({ searchQuery }) {
       }
 
       const imageDataUrl = await readFileAsDataUrl(imageFile);
-      const response = await fetch("/api/products", {
+      const response = await apiFetch("/api/products", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -240,7 +241,7 @@ export function Main({ searchQuery }) {
     setPasswordError("");
 
     try {
-      const response = await fetch("/api/auth", {
+      const response = await apiFetch("/api/auth", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -534,7 +535,7 @@ export function Main({ searchQuery }) {
                   {product.imageUrl ? (
                     <img
                       className="main__product-image"
-                      src={product.imageUrl}
+                      src={assetUrl(product.imageUrl)}
                       alt={product.name}
                     />
                   ) : (
@@ -584,7 +585,7 @@ export function Main({ searchQuery }) {
                 {selectedProduct.imageUrl ? (
                   <img
                     className="main__modal-image"
-                    src={selectedProduct.imageUrl}
+                    src={assetUrl(selectedProduct.imageUrl)}
                     alt={selectedProduct.name}
                   />
                 ) : (
@@ -634,3 +635,4 @@ export function Main({ searchQuery }) {
     </main>
   );
 }
+
