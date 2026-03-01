@@ -9,3 +9,25 @@
   display: grid;
   grid-template-rows: auto 1fr auto;
 }
+
+.app__health-panel {
+  margin: 16px clamp(16px, 4vw, 42px) 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+  padding: 14px 16px;
+}
+
+.app__health-title {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.app__health-output {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
