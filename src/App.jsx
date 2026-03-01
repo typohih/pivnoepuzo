@@ -7,6 +7,7 @@ import "./App.css";
 export function App() {
   const [searchQuery, setSearchQuery] = useState("");
   console.log(import.meta.env.VITE_API_URL);
+  console.log("APP RENDER MARKER");
   return (
     <div className="app">
       <div className="app__shell">
