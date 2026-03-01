@@ -6,7 +6,7 @@ import "./App.css";
 
 export function App() {
   const [searchQuery, setSearchQuery] = useState("");
-
+  console.log(import.meta.env.VITE_API_URL);
   return (
     <div className="app">
       <div className="app__shell">
