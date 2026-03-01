@@ -1,3 +1,4 @@
+import cors from "cors";
 import express from "express";
 import { promises as fs } from "node:fs";
 import path from "node:path";
@@ -12,6 +13,13 @@ const uploadsDir = path.join(rootDir, "uploads");
 const catalogFile = path.join(dataDir, "catalog.json");
 const port = Number(process.env.PORT) || 3001;
 const editorPassword = process.env.CATALOG_EDITOR_PASSWORD || "12utfg*po2c";
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  ...(process.env.ADDITIONAL_CORS_ORIGINS ?? "")
+    .split(",")
+    .map((origin) => origin.trim()),
+  "http://localhost:5173",
+].filter(Boolean);
 
 const mimeToExtension = {
   "image/jpeg": ".jpg",
@@ -128,8 +136,16 @@ function normalizeProduct(body, imageUrl) {
 export function createApp() {
   const app = express();
 
+  app.use(cors({ origin: allowedOrigins }));
   app.use(express.json({ limit: "10mb" }));
   app.use("/uploads", express.static(uploadsDir));
+
+  app.get("/api/health", (_request, response) => {
+    response.json({
+      ok: true,
+      time: new Date().toISOString(),
+    });
+  });
 
   app.get("/api/products", async (_request, response) => {
     const catalog = await readCatalog();
@@ -197,3 +213,4 @@ if (isDirectRun) {
       process.exit(1);
     });
 }
+
