@@ -55,6 +55,24 @@ function parseRatingValue(value) {
   return Number(text) || 0;
 }
 
+function productToFormData(product) {
+  if (!product) {
+    return emptyForm;
+  }
+
+  return {
+    name: product.name || "",
+    price: product.price || "",
+    rating: product.ratingLabel || product.rating || "",
+    rarity: product.rarity || "",
+    design: product.design || "",
+    taste: product.taste || "",
+    aftertaste: product.aftertaste || "",
+    alcoholPercent: product.alcoholPercent || "",
+    description: product.description || "",
+  };
+}
+
 export function Main({ searchQuery }) {
   const [catalog, setCatalog] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -72,6 +90,13 @@ export function Main({ searchQuery }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
+  const [modalFormData, setModalFormData] = useState(emptyForm);
+  const [modalImageFile, setModalImageFile] = useState(null);
+  const [modalImagePreview, setModalImagePreview] = useState("");
+  const [modalActionError, setModalActionError] = useState("");
+  const [isModalEditing, setIsModalEditing] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const sortRef = useRef(null);
 
   const loadCatalog = async () => {
@@ -124,6 +149,45 @@ export function Main({ searchQuery }) {
     };
   }, [isSortOpen]);
 
+  useEffect(() => {
+    return () => {
+      if (imagePreview.startsWith("blob:")) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
+
+  useEffect(() => {
+    return () => {
+      if (modalImagePreview.startsWith("blob:")) {
+        URL.revokeObjectURL(modalImagePreview);
+      }
+    };
+  }, [modalImagePreview]);
+
+  useEffect(() => {
+    if (!selectedProduct) {
+      return undefined;
+    }
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    };
+
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [selectedProduct]);
+
+  useEffect(() => {
+    if (!selectedProduct) {
+      return;
+    }
+
+    setModalFormData(productToFormData(selectedProduct));
+  }, [selectedProduct]);
+
   const searchTokens = tokenize(searchQuery);
   const filteredCatalog =
     searchTokens.length === 0
@@ -132,6 +196,7 @@ export function Main({ searchQuery }) {
           const titleTokens = tokenize(product.name);
           return searchTokens.some((token) => titleTokens.includes(token));
         });
+
   const visibleCatalog = [...filteredCatalog].sort((left, right) => {
     if (ratingSort === "asc") {
       return parseRatingValue(left.ratingLabel || left.rating) -
@@ -146,9 +211,58 @@ export function Main({ searchQuery }) {
     return 0;
   });
 
+  const resetEditorForm = () => {
+    setFormData(emptyForm);
+    setImageFile(null);
+
+    if (imagePreview.startsWith("blob:")) {
+      URL.revokeObjectURL(imagePreview);
+    }
+
+    setImagePreview("");
+  };
+
+  const resetModalState = () => {
+    setIsModalEditing(false);
+    setModalActionError("");
+    setModalFormData(emptyForm);
+    setModalImageFile(null);
+
+    if (modalImagePreview.startsWith("blob:")) {
+      URL.revokeObjectURL(modalImagePreview);
+    }
+
+    setModalImagePreview("");
+  };
+
+  const authenticateEditor = async (candidatePassword) => {
+    const response = await apiFetch("/api/auth", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ password: candidatePassword }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Wrong password");
+    }
+
+    setEditorPassword(candidatePassword);
+    setIsEditorAuthorized(true);
+  };
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((current) => ({
+      ...current,
+      [name]: value,
+    }));
+  };
+
+  const handleModalChange = (event) => {
+    const { name, value } = event.target;
+    setModalFormData((current) => ({
       ...current,
       [name]: value,
     }));
@@ -171,23 +285,25 @@ export function Main({ searchQuery }) {
     setImagePreview(URL.createObjectURL(file));
   };
 
-  useEffect(() => {
-    return () => {
-      if (imagePreview.startsWith("blob:")) {
-        URL.revokeObjectURL(imagePreview);
+  const handleModalImageChange = (event) => {
+    const file = event.target.files?.[0] || null;
+    setModalImageFile(file);
+    setModalActionError("");
+
+    if (!file) {
+      if (modalImagePreview.startsWith("blob:")) {
+        URL.revokeObjectURL(modalImagePreview);
       }
-    };
-  }, [imagePreview]);
 
-  const resetEditorForm = () => {
-    setFormData(emptyForm);
-    setImageFile(null);
-
-    if (imagePreview.startsWith("blob:")) {
-      URL.revokeObjectURL(imagePreview);
+      setModalImagePreview("");
+      return;
     }
 
-    setImagePreview("");
+    if (modalImagePreview.startsWith("blob:")) {
+      URL.revokeObjectURL(modalImagePreview);
+    }
+
+    setModalImagePreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (event) => {
@@ -241,21 +357,8 @@ export function Main({ searchQuery }) {
     setPasswordError("");
 
     try {
-      const response = await apiFetch("/api/auth", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ password }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Wrong password");
-      }
-
-      setEditorPassword(password);
+      await authenticateEditor(password);
       setPassword("");
-      setIsEditorAuthorized(true);
       setIsEditorOpen(true);
     } catch (error) {
       setPasswordError(
@@ -264,28 +367,130 @@ export function Main({ searchQuery }) {
     }
   };
 
+  const openProductModal = (product) => {
+    resetModalState();
+    setSelectedProduct(product);
+  };
+
   const closeModal = () => {
+    resetModalState();
     setSelectedProduct(null);
+  };
+
+  const handleEditRequest = () => {
+    setModalActionError("");
+
+    if (!isEditorAuthorized) {
+      return;
+    }
+
+    setModalFormData(productToFormData(selectedProduct));
+    setIsModalEditing(true);
+  };
+
+  const handleDeleteRequest = async () => {
+    if (!selectedProduct) {
+      return;
+    }
+
+    setModalActionError("");
+
+    if (!isEditorAuthorized) {
+      return;
+    }
+
+    const shouldDelete = window.confirm(`Удалить товар "${selectedProduct.name}"?`);
+    if (!shouldDelete) {
+      return;
+    }
+
+    setIsDeleting(true);
+
+    try {
+      const response = await apiFetch(`/api/products/${selectedProduct.id}`, {
+        method: "DELETE",
+        headers: {
+          "x-catalog-password": editorPassword,
+        },
+      });
+
+      if (!response.ok) {
+        const errorPayload = await response.json().catch(() => null);
+        throw new Error(errorPayload?.error || "Failed to delete product");
+      }
+
+      setCatalog((current) =>
+        current.filter((product) => product.id !== selectedProduct.id),
+      );
+      closeModal();
+    } catch (error) {
+      setModalActionError(
+        error instanceof Error ? error.message : "Failed to delete product",
+      );
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleUpdateSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!selectedProduct) {
+      return;
+    }
+
+    setModalActionError("");
+    setIsUpdating(true);
+
+    try {
+      const payload = { ...modalFormData };
+
+      if (modalImageFile) {
+        payload.imageDataUrl = await readFileAsDataUrl(modalImageFile);
+      }
+
+      const response = await apiFetch(`/api/products/${selectedProduct.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-catalog-password": editorPassword,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorPayload = await response.json().catch(() => null);
+        throw new Error(errorPayload?.error || "Failed to update product");
+      }
+
+      const updatedProduct = await response.json();
+
+      setCatalog((current) =>
+        current.map((product) =>
+          product.id === updatedProduct.id ? updatedProduct : product,
+        ),
+      );
+      setSelectedProduct(updatedProduct);
+      setIsModalEditing(false);
+      setModalImageFile(null);
+
+      if (modalImagePreview.startsWith("blob:")) {
+        URL.revokeObjectURL(modalImagePreview);
+      }
+
+      setModalImagePreview("");
+    } catch (error) {
+      setModalActionError(
+        error instanceof Error ? error.message : "Failed to update product",
+      );
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   const activeSortLabel =
     sortOptions.find((option) => option.value === ratingSort)?.label ??
     sortOptions[0].label;
-
-  useEffect(() => {
-    if (!selectedProduct) {
-      return undefined;
-    }
-
-    const handleEscape = (event) => {
-      if (event.key === "Escape") {
-        setSelectedProduct(null);
-      }
-    };
-
-    window.addEventListener("keydown", handleEscape);
-    return () => window.removeEventListener("keydown", handleEscape);
-  }, [selectedProduct]);
 
   return (
     <main className="main">
@@ -348,8 +553,8 @@ export function Main({ searchQuery }) {
                 Редактор (доступ только для администраторов)
               </h3>
               <p className="main__composer-text">
-                Пароль проверяется на сервере. После этого можно добавлять
-                товары и загружать изображения.
+                Пароль проверяется на сервере. После этого можно добавлять товары и
+                загружать изображения.
               </p>
             </div>
             <form className="main__auth" onSubmit={handlePasswordSubmit}>
@@ -376,8 +581,8 @@ export function Main({ searchQuery }) {
             <div className="main__composer-copy">
               <h3 className="main__composer-title">Редактор каталога</h3>
               <p className="main__composer-text">
-                Новый товар отправляется на сервер, а изображение сохраняется в
-                общей папке `uploads/`.
+                Новый товар отправляется на сервер, а изображение сохраняется в общей
+                папке `uploads/`.
               </p>
             </div>
             <form className="main__form" onSubmit={handleSubmit}>
@@ -454,7 +659,7 @@ export function Main({ searchQuery }) {
                 />
               </label>
               <label className="main__field">
-                <span>Процентаж</span>
+                <span>Процент алкоголя</span>
                 <input
                   className="main__input"
                   name="alcoholPercent"
@@ -474,7 +679,7 @@ export function Main({ searchQuery }) {
                 />
               </label>
               <label className="main__field main__field--wide">
-                <span>Итоговое описание</span>
+                <span>Описание</span>
                 <textarea
                   className="main__input main__input--textarea"
                   name="description"
@@ -511,8 +716,7 @@ export function Main({ searchQuery }) {
         <ul className="main__list">
           {!isLoading && catalog.length === 0 && (
             <li className="main__empty">
-              Каталог пуст. Используйте кнопку "Добавить обзор", чтобы создать
-              товар.
+              Каталог пуст. Используйте кнопку "Добавить обзор", чтобы создать товар.
             </li>
           )}
           {!isLoading && catalog.length > 0 && visibleCatalog.length === 0 && (
@@ -526,7 +730,7 @@ export function Main({ searchQuery }) {
               <button
                 className="main__card-button"
                 type="button"
-                onClick={() => setSelectedProduct(product)}
+                onClick={() => openProductModal(product)}
               >
                 <div className="main__card-head">
                   <p className="main__name">{product.name}</p>
@@ -548,7 +752,7 @@ export function Main({ searchQuery }) {
                     <dd>{product.price ? `${product.price} руб.` : "-"}</dd>
                   </div>
                   <div className="main__meta-item">
-                    <dt>Процентаж</dt>
+                    <dt>Процент</dt>
                     <dd>{product.alcoholPercent || "-"}</dd>
                   </div>
                   <div className="main__meta-item">
@@ -582,7 +786,13 @@ export function Main({ searchQuery }) {
                 Закрыть
               </button>
               <div className="main__modal-media">
-                {selectedProduct.imageUrl ? (
+                {modalImagePreview ? (
+                  <img
+                    className="main__modal-image"
+                    src={modalImagePreview}
+                    alt={selectedProduct.name}
+                  />
+                ) : selectedProduct.imageUrl ? (
                   <img
                     className="main__modal-image"
                     src={assetUrl(selectedProduct.imageUrl)}
@@ -593,40 +803,201 @@ export function Main({ searchQuery }) {
                 )}
               </div>
               <div className="main__modal-content">
-                <h3 className="main__modal-title">{selectedProduct.name}</h3>
-                <p className="main__modal-price">
-                  {selectedProduct.price ? `${selectedProduct.price} руб.` : "-"}
-                </p>
-                <dl className="main__hover-meta">
-                  <div className="main__meta-item">
-                    <dt>Редкость</dt>
-                    <dd>{selectedProduct.rarity || "-"}</dd>
+                <div className="main__modal-header">
+                  <div>
+                    <h3 className="main__modal-title">{selectedProduct.name}</h3>
+                    <p className="main__modal-price">
+                      {selectedProduct.price ? `${selectedProduct.price} руб.` : "-"}
+                    </p>
                   </div>
-                  <div className="main__meta-item">
-                    <dt>Дизайн</dt>
-                    <dd>{selectedProduct.design || "-"}</dd>
-                  </div>
-                  <div className="main__meta-item">
-                    <dt>Вкус</dt>
-                    <dd>{selectedProduct.taste || "-"}</dd>
-                  </div>
-                  <div className="main__meta-item">
-                    <dt>Послевкусие</dt>
-                    <dd>{selectedProduct.aftertaste || "-"}</dd>
-                  </div>
-                  <div className="main__meta-item">
-                    <dt>Процентаж</dt>
-                    <dd>{selectedProduct.alcoholPercent || "-"}</dd>
-                  </div>
-                  <div className="main__meta-item">
-                    <dt>Рейтинг</dt>
-                    <dd>{selectedProduct.ratingLabel || selectedProduct.rating}</dd>
-                  </div>
-                </dl>
-                <div className="main__meta-item">
-                  <dt>Итог</dt>
-                  <dd className="main__description">{selectedProduct.description}</dd>
                 </div>
+
+                {modalActionError && <p className="main__error">{modalActionError}</p>}
+
+                {isModalEditing ? (
+                  <form className="main__form main__form--modal" onSubmit={handleUpdateSubmit}>
+                    <label className="main__field">
+                      <span>Название</span>
+                      <input
+                        className="main__input"
+                        name="name"
+                        value={modalFormData.name}
+                        onChange={handleModalChange}
+                        required
+                      />
+                    </label>
+                    <label className="main__field">
+                      <span>Цена</span>
+                      <input
+                        className="main__input"
+                        name="price"
+                        value={modalFormData.price}
+                        onChange={handleModalChange}
+                        required
+                      />
+                    </label>
+                    <label className="main__field">
+                      <span>Рейтинг</span>
+                      <input
+                        className="main__input"
+                        name="rating"
+                        type="text"
+                        inputMode="decimal"
+                        value={modalFormData.rating}
+                        onChange={handleModalChange}
+                        required
+                      />
+                    </label>
+                    <label className="main__field">
+                      <span>Редкость</span>
+                      <input
+                        className="main__input"
+                        name="rarity"
+                        value={modalFormData.rarity}
+                        onChange={handleModalChange}
+                        required
+                      />
+                    </label>
+                    <label className="main__field">
+                      <span>Дизайн</span>
+                      <input
+                        className="main__input"
+                        name="design"
+                        value={modalFormData.design}
+                        onChange={handleModalChange}
+                        required
+                      />
+                    </label>
+                    <label className="main__field">
+                      <span>Вкус</span>
+                      <input
+                        className="main__input"
+                        name="taste"
+                        value={modalFormData.taste}
+                        onChange={handleModalChange}
+                        required
+                      />
+                    </label>
+                    <label className="main__field">
+                      <span>Послевкусие</span>
+                      <input
+                        className="main__input"
+                        name="aftertaste"
+                        value={modalFormData.aftertaste}
+                        onChange={handleModalChange}
+                        required
+                      />
+                    </label>
+                    <label className="main__field">
+                      <span>Процент алкоголя</span>
+                      <input
+                        className="main__input"
+                        name="alcoholPercent"
+                        value={modalFormData.alcoholPercent}
+                        onChange={handleModalChange}
+                        required
+                      />
+                    </label>
+                    <label className="main__field">
+                      <span>Новое изображение</span>
+                      <input
+                        className="main__input main__input--file"
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/gif"
+                        onChange={handleModalImageChange}
+                      />
+                    </label>
+                    <label className="main__field main__field--wide">
+                      <span>Описание</span>
+                      <textarea
+                        className="main__input main__input--textarea"
+                        name="description"
+                        value={modalFormData.description}
+                        onChange={handleModalChange}
+                        rows="4"
+                        required
+                      />
+                    </label>
+                    <div className="main__modal-form-actions">
+                      <button className="main__submit" type="submit" disabled={isUpdating}>
+                        {isUpdating ? "Сохранение..." : "Сохранить изменения"}
+                      </button>
+                      <button
+                        className="main__action-button"
+                        type="button"
+                        onClick={() => {
+                          setIsModalEditing(false);
+                          setModalActionError("");
+                          setModalFormData(productToFormData(selectedProduct));
+                          setModalImageFile(null);
+
+                          if (modalImagePreview.startsWith("blob:")) {
+                            URL.revokeObjectURL(modalImagePreview);
+                          }
+
+                          setModalImagePreview("");
+                        }}
+                        disabled={isUpdating}
+                      >
+                        Отмена
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <>
+                    <dl className="main__hover-meta">
+                      <div className="main__meta-item">
+                        <dt>Редкость</dt>
+                        <dd>{selectedProduct.rarity || "-"}</dd>
+                      </div>
+                      <div className="main__meta-item">
+                        <dt>Дизайн</dt>
+                        <dd>{selectedProduct.design || "-"}</dd>
+                      </div>
+                      <div className="main__meta-item">
+                        <dt>Вкус</dt>
+                        <dd>{selectedProduct.taste || "-"}</dd>
+                      </div>
+                      <div className="main__meta-item">
+                        <dt>Послевкусие</dt>
+                        <dd>{selectedProduct.aftertaste || "-"}</dd>
+                      </div>
+                      <div className="main__meta-item">
+                        <dt>Процент</dt>
+                        <dd>{selectedProduct.alcoholPercent || "-"}</dd>
+                      </div>
+                      <div className="main__meta-item">
+                        <dt>Рейтинг</dt>
+                        <dd>{selectedProduct.ratingLabel || selectedProduct.rating}</dd>
+                      </div>
+                    </dl>
+                    <div className="main__meta-item">
+                      <dt>Описание</dt>
+                      <dd className="main__description">{selectedProduct.description}</dd>
+                    </div>
+                  </>
+                )}
+
+                {isEditorAuthorized && (
+                  <div className="main__modal-actions">
+                    <button
+                      className="main__action-button"
+                      type="button"
+                      onClick={handleEditRequest}
+                      disabled={isUpdating || isDeleting}
+                    >
+                      Изменить
+                    </button>
+                    <button
+                      className="main__action-button main__action-button--danger"
+                      type="button"
+                      onClick={handleDeleteRequest}
+                      disabled={isUpdating || isDeleting}
+                    >
+                      {isDeleting ? "Удаление..." : "Удалить"}
+                    </button>
+                  </div>
+                )}
               </div>
             </section>
           </div>
@@ -635,4 +1006,3 @@ export function Main({ searchQuery }) {
     </main>
   );
 }
-

@@ -3,10 +3,10 @@ import app, { ensureStorage, port } from "./app.js";
 ensureStorage()
   .then(() => {
     app.listen(port, () => {
-      console.log(`Catalog server listening on http://localhost:${port}`);
+      console.log(`[dev] Catalog server listening on http://localhost:${port}`);
     });
   })
   .catch((error) => {
-    console.error("Failed to start catalog server", error);
+    console.error("[dev] Failed to start catalog server", error);
     process.exit(1);
   });

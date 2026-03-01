@@ -193,6 +193,10 @@
   gap: 12px;
 }
 
+.main__form--modal {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .main__auth {
   display: flex;
   align-items: end;
@@ -504,6 +508,49 @@
   padding-right: 4px;
 }
 
+.main__modal-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.main__modal-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: 14px;
+  padding-bottom: 2px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(53, 45, 74, 0),
+    rgba(53, 45, 74, 0.92) 22%,
+    rgba(53, 45, 74, 0.98)
+  );
+  z-index: 1;
+}
+
+.main__modal-auth {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.main__modal-form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .main__modal-title {
   font-size: clamp(1.5rem, 2.3vw, 2rem);
 }
@@ -511,6 +558,38 @@
 .main__modal-price {
   color: rgba(247, 244, 255, 0.8);
   font-weight: 600;
+}
+
+.main__action-button {
+  flex: 1 1 0;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  font-weight: 600;
+  padding: 11px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.main__action-button:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-1px);
+}
+
+.main__action-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+  transform: none;
+}
+
+.main__action-button--danger {
+  border-color: rgba(255, 125, 125, 0.38);
+  background: rgba(255, 95, 95, 0.12);
+}
+
+.main__action-button--danger:hover {
+  background: rgba(255, 95, 95, 0.2);
 }
 
 @media (max-width: 520px) {
@@ -536,8 +615,13 @@
     grid-template-columns: 1fr;
   }
 
+  .main__form--modal {
+    grid-template-columns: 1fr;
+  }
+
   .main__editor-toggle,
-  .main__submit {
+  .main__submit,
+  .main__action-button {
     width: 100%;
   }
 
@@ -553,6 +637,17 @@
 
   .main__modal-media {
     min-height: 220px;
+  }
+
+  .main__modal-header,
+  .main__modal-actions,
+  .main__modal-form-actions {
+    display: grid;
+  }
+
+  .main__modal-actions {
+    position: sticky;
+    bottom: 0;
   }
 
   .main__meta--compact,
