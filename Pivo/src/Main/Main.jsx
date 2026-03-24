@@ -35,6 +35,7 @@ export function Main () {
     const [inputValue, setInputValue] = useState("")
     const [debouncedInputValue, setDebouncedInputValue] = useState("")
     const [products, setProducts] = useState([])
+    const [error, setError] = useState("")
     const [isDropdownClicked, setIsDropdownClicked] = useState(false)
     const [selected, setSelected] = useState("Сортировать по:")
     const [selectedProduct, setSelectedProduct] = useState(null)
@@ -72,6 +73,8 @@ export function Main () {
 
         try {
             setLoading(true)
+            setError("")
+
             const response = await fetch(`${API_URL}/products`, {
                 method: "GET"
             })
@@ -84,6 +87,8 @@ export function Main () {
             setProducts(data)
         } catch (error) {
             console.log("Ошибка:", error)
+            setProducts([])
+            setError("Не удалось загрузить каталог. Проверь сервер и попробуй снова.")
         } finally {
             const elapsed = Date.now() - loadingStartedAt
             const minimumLoadingTime = 700
@@ -179,6 +184,13 @@ export function Main () {
                             <div className='loader_icon'>
                                 <LottieAnimation animationData={lottieflow} loop />
                             </div>
+                        </div>
+                    ) : error ? (
+                        <div className="loader loader_error">
+                            <span>{error}</span>
+                            <button className='loader_retry' onClick={getProducts}>
+                                Попробовать снова
+                            </button>
                         </div>
                     ) : (
                         sortedProducts.map((product) => (

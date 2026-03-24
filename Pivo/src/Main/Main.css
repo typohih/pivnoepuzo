@@ -448,6 +448,10 @@
     color: #22102A;
 }
 
+.loader_error {
+    min-height: 200px;
+}
+
 .loader_spinner {
     width: 52px;
     height: 52px;
@@ -459,6 +463,22 @@
 
 .loader_icon {
     margin-left: 0;
+}
+
+.loader_retry {
+    border: none;
+    border-radius: 999px;
+    background-color: #22102A;
+    color: #FFFFFF;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.loader_retry:hover {
+    background-color: #3a2f3f;
+    transform: translateY(-2px);
 }
 
 @keyframes loader-spin {
