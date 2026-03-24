@@ -229,9 +229,9 @@
 }
 
 .product_image {
-    flex: 1 1 auto;
     display: flex;
-    margin-bottom: 14px;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 .product_image img {
@@ -307,10 +307,6 @@
         font-size: 19px;
     }
 
-    .product_image {
-        margin-bottom: 12px;
-    }
-
     .product_image img {
         min-height: 250px;
         max-height: 250px;
@@ -368,7 +364,7 @@
 .divider {
     height: 1px;
     background: #d9d9d9;
-    margin: 0 0 14px;
+    margin: 14px 0 10px;
 }
 
 .product_card_description {
