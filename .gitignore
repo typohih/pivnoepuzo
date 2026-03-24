@@ -1,6 +1,6 @@
 # Root-level local artifacts
-app.db
-uploads/
+/app.db
+/uploads/
 
 # Frontend artifacts
 Pivo/node_modules/
