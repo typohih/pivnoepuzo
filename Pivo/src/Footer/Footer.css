@@ -1,0 +1,38 @@
+@font-face {
+  font-family: "Farabee";
+  src: url("../fonts/Farabee.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Nishiki";
+  src: url("../fonts/NishikiTeki.ttf") format("truetype");
+}
+
+.footer_section {
+    background-color: #22102A;
+    color: #FFFFFF;
+    border-radius: 100px 100px 0 0;
+    text-align: center;
+    font-family: "Nishiki", sans-serif;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 3px;
+}
+
+.footer_text {
+    font-size: 50px;
+}
+
+.footer_button {
+    background-color: none;
+    border: none;
+    outline: none;
+    margin-right: 2vw;
+}
+
+.footer_image {
+    width: 5vw;
+    height: 5vh;
+    margin-top: 1vh;
+}

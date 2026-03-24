@@ -1,0 +1,15 @@
+# Root-level local artifacts
+app.db
+uploads/
+
+# Frontend artifacts
+Pivo/node_modules/
+Pivo/dist/
+
+# Python cache
+backend/__pycache__/
+backend/routes/__pycache__/
+
+# Env files
+.env
+.env.*
