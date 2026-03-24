@@ -372,13 +372,17 @@
     flex-direction: column;
     font-weight: 500;
     font-family: 'Courier New', Courier, monospace;
+    gap: 8px;
 }
 
 .product_rating {
     text-align: start;
     font-weight: 500;
     font-family: 'Courier New', Courier, monospace;
-    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
     position: relative;
 }
 

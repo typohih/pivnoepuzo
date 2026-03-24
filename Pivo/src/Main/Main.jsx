@@ -217,13 +217,18 @@ export function Main () {
                                     <section className='product_rarity'>
                                         Редкость: {product.rarity}
                                     </section>
+                                    <section className='product_author'>
+                                        Автор: {product.author}
+                                    </section>
+                                    <section className='product_price'>
+                                        Цена: {product.price} раблс
+                                    </section>
                                     <section className='product_rating'>
                                         Рейтинг: {product.rating}
                                         <span className="stars">
                                             <span className="stars-empty">★★★★★</span>
                                             <span className="stars-filled" style={{ width: getStarWidth(product.rating) }}>★★★★★</span>
                                         </span>
-                                        <section></section>
                                     </section>
                                 </section>
                             </div>
