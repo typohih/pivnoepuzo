@@ -175,6 +175,7 @@ export function Main () {
                     {loading ? (
                         <div className="loader">
                             <span>Каталог загружается...</span>
+                            <div className='loader_spinner' aria-hidden="true"></div>
                             <div className='loader_icon'>
                                 <LottieAnimation animationData={lottieflow} loop />
                             </div>
