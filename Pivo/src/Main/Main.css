@@ -240,9 +240,24 @@
 }
 
 @media (max-width: 640px) {
+    .top_section,
+    .main_section {
+        margin-left: 4vw;
+        margin-right: 4vw;
+    }
+
+    .Finder {
+        gap: 10px;
+    }
+
+    .Input {
+        min-width: 0;
+    }
+
     .catalog_toolbar {
         grid-template-columns: 1fr;
         justify-items: center;
+        padding-top: 16px;
     }
 
     .catalog_toolbar_left,
@@ -252,6 +267,61 @@
 
     .container {
         grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 16px;
+    }
+
+    .dropdown_button,
+    .dropdown_button2,
+    .dropdown_button3 {
+        width: min(300px, 82vw);
+    }
+
+    .product_image img {
+        height: 32vh;
+    }
+
+    .loader {
+        min-height: 180px;
+        font-size: 22px;
+    }
+
+    .modal {
+        width: calc(100vw - 24px);
+        max-height: 85vh;
+        overflow-y: auto;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        top: 50%;
+    }
+
+    .modal_header {
+        font-size: 22px;
+        padding-top: 14px;
+    }
+
+    .modal_image {
+        width: calc(100% - 20px);
+        height: 34vh;
+        margin: 0 10px 10px;
+    }
+
+    .modal_desc {
+        margin-left: 0;
+        border-radius: 0;
+        padding-bottom: 12px;
+    }
+
+    .close_button {
+        width: 36px;
+        height: 36px;
+        top: 10px;
+        right: 10px;
+    }
+
+    .modal_full_desc {
+        margin: 14px;
+        padding-bottom: 16px;
     }
 }
 

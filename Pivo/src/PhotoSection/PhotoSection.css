@@ -108,3 +108,43 @@
     background-color: rgb(204, 208, 211);
     text-shadow: 0 0 1px currentColor;
 }
+
+@media (max-width: 900px) {
+    .hero {
+        min-height: 100svh;
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+
+    .site_logo {
+        width: min(58vw, 250px);
+        margin-bottom: 18px;
+    }
+
+    .title {
+        font-size: clamp(56px, 16vw, 96px);
+        text-align: center;
+        line-height: 0.95;
+    }
+
+    .description {
+        max-width: 88vw;
+        font-size: clamp(18px, 4.6vw, 24px);
+        margin-bottom: 28px;
+    }
+
+    .buttons {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .button {
+        width: min(280px, 82vw);
+        margin: 0;
+        font-size: 24px;
+        padding: 16px 10px;
+    }
+}

@@ -151,3 +151,74 @@
     transform: scale(1.2, 1.2);
     transform: translate(-140%);
 }
+
+@media (max-width: 900px) {
+    .experts_container {
+        margin-top: 12vh;
+        margin-bottom: 12vh;
+        gap: 48px;
+        padding: 0 20px;
+    }
+
+    .Expert1,
+    .Expert2 {
+        width: min(280px, 80vw);
+        margin: 0;
+        font-size: 32px;
+    }
+
+    .Expert1 img,
+    .Expert2 img {
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
+    }
+
+    .hidden_content,
+    .hidden_content2 {
+        opacity: 1;
+        visibility: visible;
+        position: static;
+        margin-top: 14px;
+        padding: 0;
+        transform: none;
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+    }
+
+    .hidden_content img,
+    .hidden_content2 img {
+        width: 44px;
+        height: 44px;
+        object-fit: contain;
+    }
+
+    .Expert1:hover .hidden_content,
+    .Expert1:hover .hidden_content2,
+    .Expert2:hover .hidden_content,
+    .Expert2:hover .hidden_content2 {
+        transform: none;
+    }
+
+    .hidden_Expert1,
+    .hidden_Expert2 {
+        opacity: 1;
+        visibility: visible;
+        position: static;
+        margin: 18px 0 0;
+        transform: none;
+    }
+
+    .hidden_Expert1 img,
+    .hidden_Expert2 img {
+        width: min(280px, 80vw);
+        height: auto;
+        max-height: none;
+    }
+
+    .Expert1:hover .hidden_Expert1,
+    .Expert2:hover .hidden_Expert2 {
+        transform: none;
+    }
+}
