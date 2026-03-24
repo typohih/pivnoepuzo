@@ -9,6 +9,7 @@ Pivo/dist/
 # Python cache
 backend/__pycache__/
 backend/routes/__pycache__/
+backend/.venv/
 
 # Env files
 .env

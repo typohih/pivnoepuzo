@@ -212,11 +212,13 @@
 .product_name {
     text-align: center;
     font-family: "Nishiki", sans-serif;
+    font-size: 22px;
+    line-height: 1.1;
     margin-bottom: 1vh;
     color: #FFFFFF;
     background-color: #22102A;
     padding: 10px 0 10px 0;
-    border-radius: 10px 0 10px 0;
+    border-radius: 20px 0 20px 0;
     min-height: 72px;
     display: flex;
     align-items: center;
@@ -296,6 +298,7 @@
 
     .product_name {
         min-height: 64px;
+        font-size: 19px;
     }
 
     .product_image img {
