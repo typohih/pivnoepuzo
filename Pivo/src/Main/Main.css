@@ -332,9 +332,7 @@
 
     .modal_image {
         width: calc(100% - 20px);
-        max-width: calc(100% - 20px);
-        height: auto;
-        max-height: 34vh;
+        height: 38vh;
         margin: 0 10px 10px;
     }
 
@@ -460,10 +458,9 @@
 
 .modal_image {
     width: calc(100% - 2vw);
-    max-width: calc(100% - 2vw);
-    height: auto;
-    max-height: min(60vh, calc(90vh - 120px));
-    object-fit: contain;
+    height: clamp(360px, 60vh, 640px);
+    object-fit: cover;
+    object-position: center;
     margin: 0 1vw 1vw;
     box-sizing: border-box;
     border-radius: 13px;
