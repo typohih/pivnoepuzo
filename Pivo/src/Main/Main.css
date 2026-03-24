@@ -319,7 +319,7 @@
     .modal {
         width: calc(100vw - 24px);
         max-height: 85vh;
-        overflow-y: auto;
+        overflow: hidden;
         grid-template-columns: 1fr;
         grid-template-rows: auto;
         top: 50%;
@@ -332,7 +332,9 @@
 
     .modal_image {
         width: calc(100% - 20px);
-        height: 34vh;
+        max-width: calc(100% - 20px);
+        height: auto;
+        max-height: 34vh;
         margin: 0 10px 10px;
     }
 
@@ -409,6 +411,10 @@
     display: grid;
     grid-template-columns: 2fr 1fr;
     grid-template-rows: auto auto;
+    align-items: stretch;
+    width: min(1100px, calc(100vw - 32px));
+    max-height: 90vh;
+    overflow: hidden;
     box-shadow:
         0 12px 30px rgba(0, 0, 0, 0.22),
         0 4px 10px rgba(0, 0, 0, 0.12);
@@ -417,6 +423,7 @@
 .modal_header {
     display: flex;
     flex-direction: column;
+    min-width: 0;
     color: #22102A;
     text-align: center;
     font-family: "Nishiki", sans-serif;
@@ -452,11 +459,16 @@
 }
 
 .modal_image {
-    width: 95%;
-    height: 60vh;
-    object-fit: cover;
-    margin-left: 1vw;
+    width: calc(100% - 2vw);
+    max-width: calc(100% - 2vw);
+    height: auto;
+    max-height: min(60vh, calc(90vh - 120px));
+    object-fit: contain;
+    margin: 0 1vw 1vw;
+    box-sizing: border-box;
     border-radius: 13px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    display: block;
 }
 
 .modal_desc {
@@ -467,6 +479,7 @@
     border-radius: 0 20px 0 20px;
     position: relative;
     margin-left: 1vw;
+    overflow-y: auto;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     box-shadow:
         0 12px 30px rgba(0, 0, 0, 0.22),
