@@ -214,17 +214,21 @@ export function Main () {
                                 </div>
                                 <div className="divider"></div>
                                 <section className='product_card_description'>
-                                    <section className='product_rarity'>
-                                        Редкость: {product.rarity}
+                                    <section className='product_meta_row product_rarity'>
+                                        <span className='product_meta_label'>Редкость:</span>
+                                        <span className='product_meta_value'>{product.rarity}</span>
                                     </section>
-                                    <section className='product_author'>
-                                        Автор: {product.author}
+                                    <section className='product_meta_row product_author'>
+                                        <span className='product_meta_label'>Автор:</span>
+                                        <span className='product_meta_value'>{product.author}</span>
                                     </section>
-                                    <section className='product_price'>
-                                        Цена: {product.price} раблс
+                                    <section className='product_meta_row product_price'>
+                                        <span className='product_meta_label'>Цена:</span>
+                                        <span className='product_meta_value'>{product.price} раблс</span>
                                     </section>
-                                    <section className='product_rating'>
-                                        Рейтинг: {product.rating}
+                                    <section className='product_meta_row product_rating'>
+                                        <span className='product_meta_label'>Рейтинг:</span>
+                                        <span className='product_meta_value'>{product.rating}</span>
                                         <span className="stars">
                                             <span className="stars-empty">★★★★★</span>
                                             <span className="stars-filled" style={{ width: getStarWidth(product.rating) }}>★★★★★</span>

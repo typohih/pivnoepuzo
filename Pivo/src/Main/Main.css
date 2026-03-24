@@ -375,14 +375,25 @@
     gap: 8px;
 }
 
+.product_meta_row {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    align-items: start;
+    column-gap: 8px;
+}
+
+.product_meta_label {
+    white-space: nowrap;
+}
+
+.product_meta_value {
+    min-width: 0;
+}
+
 .product_rating {
-    text-align: start;
-    font-weight: 500;
-    font-family: 'Courier New', Courier, monospace;
-    display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
+    grid-template-columns: 96px auto 1fr;
+    column-gap: 8px;
     position: relative;
 }
 
