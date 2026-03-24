@@ -1,0 +1,5 @@
+{
+  "installCommand": "npm install --prefix Pivo",
+  "buildCommand": "npm run build --prefix Pivo",
+  "outputDirectory": "Pivo/dist"
+}
