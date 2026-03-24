@@ -32,6 +32,7 @@ function LottieAnimation ({ animationData, loop = true }) {
 }
 
 export function Main () {
+    const modalRef = useRef(null)
     const [inputValue, setInputValue] = useState("")
     const [debouncedInputValue, setDebouncedInputValue] = useState("")
     const [products, setProducts] = useState([])
@@ -118,6 +119,17 @@ export function Main () {
             clearTimeout(timerId)
         }
     }, [inputValue])
+
+    useEffect(() => {
+        if (!selectedProduct || !modalRef.current) {
+            return
+        }
+
+        modalRef.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+        })
+    }, [selectedProduct])
 
     return (
         <>
@@ -218,7 +230,7 @@ export function Main () {
                         ))
                     )}
                     {selectedProduct && (
-                        <div className='modal'>
+                        <div className='modal' ref={modalRef}>
                             <section className='modal_header'>
                                 <h3 className='modal_header_text'>{selectedProduct.name}</h3>
                                 <img src={`${API_URL}${selectedProduct.image}`} alt={selectedProduct.name} className='modal_image' />
