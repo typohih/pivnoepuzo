@@ -55,15 +55,13 @@
 .Expert1:hover .hidden_content {
     opacity: 1;
     visibility: visible;
-    rotate: -45deg;
-    transform: translate(-90%, -80%);
+    transform: translate(-90%, -80%) rotate(-45deg);
 }
 
 .Expert1:hover .hidden_content2 {
     opacity: 1;
     visibility: visible;
-    rotate: 30deg;
-    transform: translate(20%, 10%);
+    transform: translate(20%, 10%) rotate(30deg);
 }
 
 .Expert1 img {
@@ -93,15 +91,13 @@
 .Expert2:hover .hidden_content {
     opacity: 1;
     visibility: visible;
-    rotate: -45deg;
-    transform: translate(-90%, -80%);
+    transform: translate(-90%, -80%) rotate(-45deg);
 }
 
 .Expert2:hover .hidden_content2 {
     opacity: 1;
     visibility: visible;
-    rotate: 30deg;
-    transform: translate(20%, 10%);
+    transform: translate(20%, 10%) rotate(30deg);
 }
 
 .hidden_Expert1 img {

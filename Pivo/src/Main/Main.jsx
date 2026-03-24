@@ -68,6 +68,8 @@ export function Main () {
     }
 
     const getProducts = async () => {
+        const loadingStartedAt = Date.now()
+
         try {
             setLoading(true)
             const response = await fetch(`${API_URL}/products`, {
@@ -83,6 +85,13 @@ export function Main () {
         } catch (error) {
             console.log("Ошибка:", error)
         } finally {
+            const elapsed = Date.now() - loadingStartedAt
+            const minimumLoadingTime = 700
+
+            if (elapsed < minimumLoadingTime) {
+                await new Promise((resolve) => setTimeout(resolve, minimumLoadingTime - elapsed))
+            }
+
             setLoading(false)
         }
     }
