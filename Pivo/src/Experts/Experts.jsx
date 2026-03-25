@@ -4,6 +4,7 @@ import beer931949 from '../../images/free-icon-beer-931949.png'
 import myAccount17200091 from '../../images/free-icon-my-account-17200091.png'
 import photo20241124030027 from '../../images/photo_2024-11-24_03-00-27.jpg'
 import photo20260324085047 from '../../images/photo_2026-03-24_08-50-47.jpg'
+import Volodya from '../../images/photo_2026-03-25_12-53-49.jpg'
 
 export function Experts () {
 
@@ -35,6 +36,21 @@ export function Experts () {
                     <img src={photo20241124030027} alt="" />
                 </div>
             </div>
+
+            <div className='Expert3'>
+                Виктор Вротопивов
+                <img src={myAccount17200091} alt="" />
+                <div className='hidden_content'>
+                    <img src={beer931949} alt="" />
+                </div>
+                <div className='hidden_content2'>
+                    <img src={beer2977173} alt="" />
+                </div>
+                <div className='hidden_Expert3'>
+                    <img src={Volodya} alt="" />
+                </div>
+            </div>
+
         </div>
     </>)
 }

@@ -83,7 +83,26 @@
     margin-top: 20vh;
 }
 
+.Expert3 {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    color: #22102A;
+    font-family: "Nishiki", sans-serif;
+    font-size: 40px;
+    position: relative;
+    width: 28vw;
+    margin-right: 30vw;
+    margin-top: 20vh;
+}
+
 .Expert2 img {
+    width: 8vw;
+    height: 12vh;
+}
+
+.Expert3 img {
     width: 8vw;
     height: 12vh;
 }
@@ -95,6 +114,18 @@
 }
 
 .Expert2:hover .hidden_content2 {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(20%, 10%) rotate(30deg);
+}
+
+.Expert3:hover .hidden_content {
+    opacity: 1;
+    visibility: visible;
+    transform: rotate(-45deg) translate(-90%, -80%);
+}
+
+.Expert3:hover .hidden_content2 {
     opacity: 1;
     visibility: visible;
     transform: translate(20%, 10%) rotate(30deg);
@@ -122,7 +153,6 @@
 .Expert1:hover .hidden_Expert1 {
     opacity: 1;
     visibility: visible;
-    transform: scale(1.2, 1.2);
     transform: translate(140%);
 }
 
@@ -148,8 +178,32 @@
 .Expert2:hover .hidden_Expert2 {
     opacity: 1;
     visibility: visible;
-    transform: scale(1.2, 1.2);
     transform: translate(-140%);
+}
+
+.hidden_Expert3 img {
+    width: 15vw;
+    height: 30vh;
+    border-radius: 20px 0;
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.28),
+        0 6px 14px rgba(0, 0, 0, 0.16);
+}
+
+.hidden_Expert3 {
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.6s ease;
+    position: absolute;
+    left: 0%;
+    margin-left: 3vw;
+    transform: scale(0.01, 0.01);
+}
+
+.Expert3:hover .hidden_Expert3 {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(165%);
 }
 
 @media (max-width: 900px) {
@@ -161,14 +215,16 @@
     }
 
     .Expert1,
-    .Expert2 {
+    .Expert2,
+    .Expert3 {
         width: min(280px, 80vw);
         margin: 0;
         font-size: 32px;
     }
 
     .Expert1 img,
-    .Expert2 img {
+    .Expert2 img,
+    .Expert3 img {
         width: 64px;
         height: 64px;
         object-fit: contain;
@@ -182,9 +238,13 @@
         margin-top: 14px;
         padding: 0;
         transform: none;
-        display: flex;
-        gap: 16px;
+        display: inline-flex;
         justify-content: center;
+        align-items: center;
+    }
+
+    .hidden_content {
+        margin-right: 16px;
     }
 
     .hidden_content img,
@@ -197,12 +257,15 @@
     .Expert1:hover .hidden_content,
     .Expert1:hover .hidden_content2,
     .Expert2:hover .hidden_content,
-    .Expert2:hover .hidden_content2 {
+    .Expert2:hover .hidden_content2,
+    .Expert3:hover .hidden_content,
+    .Expert3:hover .hidden_content2 {
         transform: none;
     }
 
     .hidden_Expert1,
-    .hidden_Expert2 {
+    .hidden_Expert2,
+    .hidden_Expert3 {
         opacity: 1;
         visibility: visible;
         position: static;
@@ -211,14 +274,16 @@
     }
 
     .hidden_Expert1 img,
-    .hidden_Expert2 img {
+    .hidden_Expert2 img,
+    .hidden_Expert3 img {
         width: min(280px, 80vw);
         height: auto;
         max-height: none;
     }
 
     .Expert1:hover .hidden_Expert1,
-    .Expert2:hover .hidden_Expert2 {
+    .Expert2:hover .hidden_Expert2,
+    .Expert3:hover .hidden_Expert3 {
         transform: none;
     }
 }
