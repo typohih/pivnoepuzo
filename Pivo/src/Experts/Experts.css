@@ -69,7 +69,8 @@
     height: 12vh;
 }
 
-.Expert2 {
+.Expert2,
+.Expert4 {
     display: flex;
     flex-direction: column;
     text-align: center;
@@ -97,7 +98,8 @@
     margin-top: 20vh;
 }
 
-.Expert2 img {
+.Expert2 img,
+.Expert4 img {
     width: 8vw;
     height: 12vh;
 }
@@ -107,13 +109,15 @@
     height: 12vh;
 }
 
-.Expert2:hover .hidden_content {
+.Expert2:hover .hidden_content,
+.Expert4:hover .hidden_content {
     opacity: 1;
     visibility: visible;
     transform: rotate(-45deg) translate(-90%, -80%);
 }
 
-.Expert2:hover .hidden_content2 {
+.Expert2:hover .hidden_content2,
+.Expert4:hover .hidden_content2 {
     opacity: 1;
     visibility: visible;
     transform: translate(20%, 10%) rotate(30deg);
@@ -181,6 +185,31 @@
     transform: translate(-140%);
 }
 
+.hidden_Expert4 img {
+    width: 15vw;
+    height: 30vh;
+    border-radius: 20px 0;
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.28),
+        0 6px 14px rgba(0, 0, 0, 0.16);
+}
+
+.hidden_Expert4 {
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.6s ease;
+    position: absolute;
+    left: 0%;
+    margin-left: 3vw;
+    transform: scale(0.01, 0.01);
+}
+
+.Expert4:hover .hidden_Expert4 {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-140%);
+}
+
 .hidden_Expert3 img {
     width: 15vw;
     height: 30vh;
@@ -216,7 +245,8 @@
 
     .Expert1,
     .Expert2,
-    .Expert3 {
+    .Expert3,
+    .Expert4 {
         width: min(280px, 80vw);
         margin: 0;
         font-size: 32px;
@@ -224,7 +254,8 @@
 
     .Expert1 img,
     .Expert2 img,
-    .Expert3 img {
+    .Expert3 img,
+    .Expert4 img {
         width: 64px;
         height: 64px;
         object-fit: contain;
@@ -259,13 +290,16 @@
     .Expert2:hover .hidden_content,
     .Expert2:hover .hidden_content2,
     .Expert3:hover .hidden_content,
-    .Expert3:hover .hidden_content2 {
+    .Expert3:hover .hidden_content2,
+    .Expert4:hover .hidden_content,
+    .Expert4:hover .hidden_content2 {
         transform: none;
     }
 
     .hidden_Expert1,
     .hidden_Expert2,
-    .hidden_Expert3 {
+    .hidden_Expert3,
+    .hidden_Expert4 {
         opacity: 1;
         visibility: visible;
         position: static;
@@ -275,7 +309,8 @@
 
     .hidden_Expert1 img,
     .hidden_Expert2 img,
-    .hidden_Expert3 img {
+    .hidden_Expert3 img,
+    .hidden_Expert4 img {
         width: min(280px, 80vw);
         height: auto;
         max-height: none;
@@ -283,7 +318,8 @@
 
     .Expert1:hover .hidden_Expert1,
     .Expert2:hover .hidden_Expert2,
-    .Expert3:hover .hidden_Expert3 {
+    .Expert3:hover .hidden_Expert3,
+    .Expert4:hover .hidden_Expert4 {
         transform: none;
     }
 }
