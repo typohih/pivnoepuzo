@@ -174,6 +174,10 @@ export function Main () {
     }, [selectedProduct])
 
     const getGridColumns = () => {
+        if (viewportWidth <= 640) {
+            return 1
+        }
+
         if (viewportWidth <= 900) {
             return 2
         }
