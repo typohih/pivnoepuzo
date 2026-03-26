@@ -31,6 +31,34 @@ function LottieAnimation ({ animationData, loop = true }) {
     return <div ref={containerRef} style={{ width: 120, height: 120 }} />
 }
 
+const uiText = {
+    sortDefault: '\u0421\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u043f\u043e:',
+    sortByRating: '\u0421\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u043a\u0430 \u043f\u043e \u0440\u0435\u0439\u0442\u0438\u043d\u0433\u0443',
+    sortByPrice: '\u0421\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u043a\u0430 \u043f\u043e \u0446\u0435\u043d\u0435',
+    searchPlaceholder: '\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435',
+    searchAlt: '\u041f\u043e\u0438\u0441\u043a',
+    ratingOption: '\u0420\u0435\u0439\u0442\u0438\u043d\u0433\u0443',
+    priceOption: '\u0426\u0435\u043d\u0435',
+    loadingCatalog: '\u041a\u0430\u0442\u0430\u043b\u043e\u0433 \u0437\u0430\u0433\u0440\u0443\u0436\u0430\u0435\u0442\u0441\u044f...',
+    retry: '\u041f\u043e\u043f\u0440\u043e\u0431\u043e\u0432\u0430\u0442\u044c \u0441\u043d\u043e\u0432\u0430',
+    loadError: '\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c \u043a\u0430\u0442\u0430\u043b\u043e\u0433. \u041f\u0440\u043e\u0432\u0435\u0440\u044c \u0441\u0435\u0440\u0432\u0435\u0440 \u0438 \u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439 \u0441\u043d\u043e\u0432\u0430.',
+    errorLabel: '\u041e\u0448\u0438\u0431\u043a\u0430:',
+    rarity: '\u0420\u0435\u0434\u043a\u043e\u0441\u0442\u044c:',
+    author: '\u0410\u0432\u0442\u043e\u0440:',
+    price: '\u0426\u0435\u043d\u0430:',
+    rating: '\u0420\u0435\u0439\u0442\u0438\u043d\u0433:',
+    close: '\u0417\u0430\u043a\u0440\u044b\u0442\u044c',
+    design: '\u0414\u0438\u0437\u0430\u0439\u043d',
+    taste: '\u0412\u043a\u0443\u0441',
+    aftertaste: '\u041f\u043e\u0441\u043b\u0435\u0432\u043a\u0443\u0441\u0438\u0435',
+    percentage: '\u041f\u0440\u043e\u0446\u0435\u043d\u0442\u0430\u0436',
+    reviewer: '\u041e\u0431\u0437\u043e\u0440\u0449\u0438\u043a',
+    result: '\u0418\u0442\u043e\u0433:',
+    currency: '\u0440\u0430\u0431\u043b\u0441'
+}
+
+const starsText = '\u2605\u2605\u2605\u2605\u2605'
+
 export function Main () {
     const modalRef = useRef(null)
     const [inputValue, setInputValue] = useState("")
@@ -38,9 +66,10 @@ export function Main () {
     const [products, setProducts] = useState([])
     const [error, setError] = useState("")
     const [isDropdownClicked, setIsDropdownClicked] = useState(false)
-    const [selected, setSelected] = useState("Сортировать по:")
+    const [selected, setSelected] = useState(uiText.sortDefault)
     const [selectedProduct, setSelectedProduct] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [viewportWidth, setViewportWidth] = useState(() => window.innerWidth)
 
     const filteredProducts = products.filter((product) => {
         const normalizedQuery = debouncedInputValue.trim().toLowerCase()
@@ -53,11 +82,11 @@ export function Main () {
     })
 
     const sortedProducts = [...filteredProducts].sort((a, b) => {
-        if (selected === "Сортировка по рейтингу") {
+        if (selected === uiText.sortByRating) {
             return Number(b.rating) - Number(a.rating)
         }
 
-        if (selected === "Сортировка по цене") {
+        if (selected === uiText.sortByPrice) {
             return Number(a.price) - Number(b.price)
         }
 
@@ -87,9 +116,9 @@ export function Main () {
             const data = await response.json()
             setProducts(data)
         } catch (error) {
-            console.log("Ошибка:", error)
+            console.log(uiText.errorLabel, error)
             setProducts([])
-            setError("Не удалось загрузить каталог. Проверь сервер и попробуй снова.")
+            setError(uiText.loadError)
         } finally {
             const elapsed = Date.now() - loadingStartedAt
             const minimumLoadingTime = 700
@@ -121,15 +150,42 @@ export function Main () {
     }, [inputValue])
 
     useEffect(() => {
+        const handleResize = () => {
+            setViewportWidth(window.innerWidth)
+        }
+
+        window.addEventListener('resize', handleResize)
+
+        return () => {
+            window.removeEventListener('resize', handleResize)
+        }
+    }, [])
+
+    useEffect(() => {
         if (!selectedProduct || !modalRef.current) {
             return
         }
 
         modalRef.current.scrollIntoView({
             behavior: 'smooth',
-            block: 'center'
+            block: 'nearest',
+            inline: 'nearest'
         })
     }, [selectedProduct])
+
+    const getGridColumns = () => {
+        if (viewportWidth <= 900) {
+            return 2
+        }
+
+        if (viewportWidth <= 1200) {
+            return 3
+        }
+
+        return 4
+    }
+
+    const gridColumns = getGridColumns()
 
     return (
         <>
@@ -137,13 +193,13 @@ export function Main () {
                 <div className='Finder'>
                     <input
                         className="Input"
-                        placeholder="Введите название"
+                        placeholder={uiText.searchPlaceholder}
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                     />
 
                     <button className='finder_button' onClick={handleSearchClick}>
-                        <img className='finder_icon' src={findLogo} alt="Поиск" />
+                        <img className='finder_icon' src={findLogo} alt={uiText.searchAlt} />
                     </button>
                 </div>
             </div>
@@ -168,19 +224,19 @@ export function Main () {
                                             className='dropdown_button2'
                                             onClick={() => {
                                                 setIsDropdownClicked(false)
-                                                setSelected("Сортировка по рейтингу")
+                                                setSelected(uiText.sortByRating)
                                             }}
                                         >
-                                            Рейтингу
+                                            {uiText.ratingOption}
                                         </button>
                                         <button
                                             className='dropdown_button3'
                                             onClick={() => {
                                                 setIsDropdownClicked(false)
-                                                setSelected("Сортировка по цене")
+                                                setSelected(uiText.sortByPrice)
                                             }}
                                         >
-                                            Цене
+                                            {uiText.priceOption}
                                         </button>
                                     </>
                                 )}
@@ -191,7 +247,7 @@ export function Main () {
                 <section className="container">
                     {loading ? (
                         <div className="loader">
-                            <span>Каталог загружается...</span>
+                            <span>{uiText.loadingCatalog}</span>
                             <div className='loader_icon'>
                                 <LottieAnimation animationData={lottieflow} loop />
                             </div>
@@ -200,108 +256,123 @@ export function Main () {
                         <div className="loader loader_error">
                             <span>{error}</span>
                             <button className='loader_retry' onClick={getProducts}>
-                                Попробовать снова
+                                {uiText.retry}
                             </button>
                         </div>
                     ) : (
-                        sortedProducts.map((product) => (
-                            <div className="product" key={product.id} onClick={() => setSelectedProduct(product)}>
-                                <section className='product_name'>
-                                    {product.name}
-                                </section>
-                                <div className='product_image'>
-                                    <img src={`${API_URL}${product.image}`} alt={product.name} />
+                        sortedProducts.map((product, index) => {
+                            const isSelected = selectedProduct?.id === product.id
+                            const columnIndex = index % gridColumns
+                            const modalPositionClass = gridColumns <= 2
+                                ? 'modal_anchor_bottom'
+                                : columnIndex >= Math.ceil(gridColumns / 2)
+                                    ? 'modal_anchor_left'
+                                    : 'modal_anchor_right'
+
+                            return (
+                                <div
+                                    className={`product_slot${isSelected ? ' product_slot_selected' : ''}`}
+                                    key={product.id}
+                                >
+                                    <div className="product" onClick={() => setSelectedProduct(product)}>
+                                        <section className='product_name'>
+                                            {product.name}
+                                        </section>
+                                        <div className='product_image'>
+                                            <img src={`${API_URL}${product.image}`} alt={product.name} />
+                                        </div>
+                                        <div className="divider"></div>
+                                        <section className='product_card_description'>
+                                            <section className='product_meta_row product_rarity'>
+                                                <span className='product_meta_label'>{uiText.rarity}</span>
+                                                <span className='product_meta_value'>{product.rarity}</span>
+                                            </section>
+                                            <section className='product_meta_row product_author'>
+                                                <span className='product_meta_label'>{uiText.author}</span>
+                                                <span className='product_meta_value'>{product.author}</span>
+                                            </section>
+                                            <section className='product_meta_row product_price'>
+                                                <span className='product_meta_label'>{uiText.price}</span>
+                                                <span className='product_meta_value'>{product.price} {uiText.currency}</span>
+                                            </section>
+                                            <section className='product_meta_row product_rating'>
+                                                <span className='product_meta_label'>{uiText.rating}</span>
+                                                <span className='product_meta_value'>{product.rating}</span>
+                                                <span className="stars">
+                                                    <span className="stars-empty">{starsText}</span>
+                                                    <span className="stars-filled" style={{ width: getStarWidth(product.rating) }}>{starsText}</span>
+                                                </span>
+                                            </section>
+                                        </section>
+                                    </div>
+                                    {isSelected && (
+                                        <div className={`modal ${modalPositionClass}`} ref={modalRef}>
+                                            <section className='modal_header'>
+                                                <h3 className='modal_header_text'>{selectedProduct.name}</h3>
+                                                <img src={`${API_URL}${selectedProduct.image}`} alt={selectedProduct.name} className='modal_image' />
+                                            </section>
+                                            <section className='modal_desc'>
+                                                <button onClick={() => setSelectedProduct(null)} className='close_button'>
+                                                    <img src={closeIcon} className='close_logo' alt={uiText.close} />
+                                                </button>
+                                                <section className='modal_design modal_desc_header_text'>
+                                                    <section>
+                                                        {uiText.design}: {selectedProduct.design_rate}
+                                                    </section>
+                                                    <section className='modal_desc_text'>
+                                                        {selectedProduct.design}
+                                                    </section>
+                                                </section>
+
+                                                <div className='modal_divider'></div>
+
+                                                <section className='modal_taste'>
+                                                    <section className='modal_desc_header_text'>
+                                                        {uiText.taste}: {selectedProduct.taste_rate}
+                                                    </section>
+                                                    <section className='modal_desc_text'>
+                                                        {selectedProduct.taste}
+                                                    </section>
+                                                </section>
+
+                                                <div className='modal_divider'></div>
+
+                                                <section className='modal_aftertaste'>
+                                                    <section className='modal_desc_header_text'>
+                                                        {uiText.aftertaste}: {selectedProduct.aftertaste_rate}
+                                                    </section>
+                                                    <section className='modal_desc_text'>
+                                                        {selectedProduct.aftertaste}
+                                                    </section>
+                                                </section>
+
+                                                <div className='modal_divider'></div>
+
+                                                <section className='modal_percentage modal_desc_header_text'>
+                                                    {uiText.percentage}: {selectedProduct.percentage}%
+                                                </section>
+
+                                                <div className='modal_divider'></div>
+
+                                                <section className='modal_price modal_desc_header_text'>
+                                                    {uiText.price} {selectedProduct.price} {uiText.currency}
+                                                </section>
+
+                                                <div className='modal_divider'></div>
+
+                                                <section className='modal_author modal_desc_header_text'>
+                                                    {uiText.reviewer}: {selectedProduct.author}
+                                                </section>
+                                            </section>
+                                            <section className='modal_full_desc'>
+                                                <span className='modal_desc_header_text'>{uiText.result}</span>{' '}
+                                                <span className='modal_desc_text'>{selectedProduct.rating} - {selectedProduct.description}</span>
+                                            </section>
+                                        </div>
+                                    )}
                                 </div>
-                                <div className="divider"></div>
-                                <section className='product_card_description'>
-                                    <section className='product_meta_row product_rarity'>
-                                        <span className='product_meta_label'>Редкость:</span>
-                                        <span className='product_meta_value'>{product.rarity}</span>
-                                    </section>
-                                    <section className='product_meta_row product_author'>
-                                        <span className='product_meta_label'>Автор:</span>
-                                        <span className='product_meta_value'>{product.author}</span>
-                                    </section>
-                                    <section className='product_meta_row product_price'>
-                                        <span className='product_meta_label'>Цена:</span>
-                                        <span className='product_meta_value'>{product.price} раблс</span>
-                                    </section>
-                                    <section className='product_meta_row product_rating'>
-                                        <span className='product_meta_label'>Рейтинг:</span>
-                                        <span className='product_meta_value'>{product.rating}</span>
-                                        <span className="stars">
-                                            <span className="stars-empty">★★★★★</span>
-                                            <span className="stars-filled" style={{ width: getStarWidth(product.rating) }}>★★★★★</span>
-                                        </span>
-                                    </section>
-                                </section>
-                            </div>
-                        ))
-                    )}
-                    {selectedProduct && (
-                        <div className='modal' ref={modalRef}>
-                            <section className='modal_header'>
-                                <h3 className='modal_header_text'>{selectedProduct.name}</h3>
-                                <img src={`${API_URL}${selectedProduct.image}`} alt={selectedProduct.name} className='modal_image' />
-                            </section>
-                            <section className='modal_desc'>
-                                <button onClick={() => setSelectedProduct(null)} className='close_button'>
-                                    <img src={closeIcon} className='close_logo' alt="Закрыть" />
-                                </button>
-                                <section className='modal_design modal_desc_header_text'>
-                                    <section>
-                                        Дизайн: {selectedProduct.design_rate}
-                                    </section>
-                                    <section className='modal_desc_text'>
-                                        {selectedProduct.design}
-                                    </section>
-                                </section>
-
-                                <div className='modal_divider'></div>
-
-                                <section className='modal_taste'>
-                                    <section className='modal_desc_header_text'>
-                                        Вкус: {selectedProduct.taste_rate}
-                                    </section>
-                                    <section className='modal_desc_text'>
-                                        {selectedProduct.taste}
-                                    </section>
-                                </section>
-
-                                <div className='modal_divider'></div>
-
-                                <section className='modal_aftertaste'>
-                                    <section className='modal_desc_header_text'>
-                                        Послевкусие: {selectedProduct.aftertaste_rate}
-                                    </section>
-                                    <section className='modal_desc_text'>
-                                        {selectedProduct.aftertaste}
-                                    </section>
-                                </section>
-
-                                <div className='modal_divider'></div>
-
-                                <section className='modal_percentage modal_desc_header_text'>
-                                    Процентаж: {selectedProduct.percentage}%
-                                </section>
-
-                                <div className='modal_divider'></div>
-
-                                <section className='modal_price modal_desc_header_text'>
-                                    Цена: {selectedProduct.price} раблс
-                                </section>
-
-                                <div className='modal_divider'></div>
-
-                                <section className='modal_author modal_desc_header_text'>
-                                    Обзорщик: {selectedProduct.author}
-                                </section>
-                            </section>
-                            <section className='modal_full_desc'>
-                                <span className='modal_desc_header_text'>Итог:</span>{' '}
-                                <span className='modal_desc_text'>{selectedProduct.rating} - {selectedProduct.description}</span>
-                            </section>
-                        </div>
+                            )
+                        })
                     )}
                 </section>
             </div>
