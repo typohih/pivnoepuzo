@@ -57,7 +57,7 @@ const uiText = {
     currency: '\u0440\u0430\u0431\u043b\u0441'
 }
 
-const starsText = '\u2605\u2605\u2605\u2605\u2605'
+const starsText = '\u2605'
 
 const normalizeRating = (rating) => {
     const numericRating = typeof rating === 'string'
@@ -69,6 +69,13 @@ const normalizeRating = (rating) => {
     }
 
     return Math.max(0, Math.min(5, numericRating))
+}
+
+const getStarFillWidth = (rating, index) => {
+    const normalizedRating = normalizeRating(rating)
+    const fill = Math.max(0, Math.min(1, normalizedRating - index))
+
+    return `${fill * 100}%`
 }
 
 export function Main () {
@@ -104,10 +111,6 @@ export function Main () {
 
         return 0
     })
-
-    const getStarWidth = (rating) => {
-        return `${(normalizeRating(rating) / 5) * 100}%`
-    }
 
     const getProducts = async () => {
         const loadingStartedAt = Date.now()
@@ -314,8 +317,14 @@ export function Main () {
                                                 <span className='product_meta_label'>{uiText.rating}</span>
                                                 <span className='product_meta_value'>{product.rating}</span>
                                                 <span className="stars">
-                                                    <span className="stars-empty">{starsText}</span>
-                                                    <span className="stars-filled" style={{ width: getStarWidth(product.rating) }}>{starsText}</span>
+                                                    {Array.from({ length: 5 }, (_, index) => (
+                                                        <span className="star" key={`${product.id}-star-${index}`}>
+                                                            <span className="star-empty">{starsText}</span>
+                                                            <span className="star-filled" style={{ width: getStarFillWidth(product.rating, index) }}>
+                                                                {starsText}
+                                                            </span>
+                                                        </span>
+                                                    ))}
                                                 </span>
                                             </section>
                                         </section>

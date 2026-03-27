@@ -512,20 +512,24 @@
 }
 
 .stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: 8px;
+}
+
+.star {
     position: relative;
     display: inline-block;
     font-size: 22px;
     line-height: 1;
-    white-space: nowrap;
-    letter-spacing: 2px;
-    margin-left: 8px;
 }
 
-.stars-empty {
+.star-empty {
     color: #b8b8b8;
 }
 
-.stars-filled {
+.star-filled {
     color: #f4c542;
     position: absolute;
     top: 0;
