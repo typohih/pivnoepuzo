@@ -59,6 +59,18 @@ const uiText = {
 
 const starsText = '\u2605\u2605\u2605\u2605\u2605'
 
+const normalizeRating = (rating) => {
+    const numericRating = typeof rating === 'string'
+        ? Number(rating.replace(',', '.').trim())
+        : Number(rating)
+
+    if (Number.isNaN(numericRating)) {
+        return 0
+    }
+
+    return Math.max(0, Math.min(5, numericRating))
+}
+
 export function Main () {
     const modalRef = useRef(null)
     const [inputValue, setInputValue] = useState("")
@@ -83,7 +95,7 @@ export function Main () {
 
     const sortedProducts = [...filteredProducts].sort((a, b) => {
         if (selected === uiText.sortByRating) {
-            return Number(b.rating) - Number(a.rating)
+            return normalizeRating(b.rating) - normalizeRating(a.rating)
         }
 
         if (selected === uiText.sortByPrice) {
@@ -94,8 +106,7 @@ export function Main () {
     })
 
     const getStarWidth = (rating) => {
-        const numericRating = Math.max(0, Math.min(5, Number(rating)))
-        return `${(numericRating / 5) * 100}%`
+        return `${(normalizeRating(rating) / 5) * 100}%`
     }
 
     const getProducts = async () => {
