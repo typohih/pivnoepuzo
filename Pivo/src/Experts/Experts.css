@@ -15,7 +15,8 @@
     align-items: center;
 }
 
-.Expert1 {
+.Expert1,
+.Expert5 {
     display: flex;
     flex-direction: column;
     text-align: center;
@@ -26,6 +27,10 @@
     position: relative;
     width: 20vw;
     margin-right: 30vw;
+}
+
+.Expert5 {
+    margin-top: 20vh;
 }
 
 .hidden_content {
@@ -52,19 +57,22 @@
     transform: translate(-50%, -50%);
 }
 
-.Expert1:hover .hidden_content {
+.Expert1:hover .hidden_content,
+.Expert5:hover .hidden_content {
     opacity: 1;
     visibility: visible;
     transform: rotate(-45deg) translate(-90%, -80%);
 }
 
-.Expert1:hover .hidden_content2 {
+.Expert1:hover .hidden_content2,
+.Expert5:hover .hidden_content2 {
     opacity: 1;
     visibility: visible;
     transform: translate(20%, 10%) rotate(30deg);
 }
 
-.Expert1 img {
+.Expert1 img,
+.Expert5 img {
     width: 8vw;
     height: 12vh;
 }
@@ -235,6 +243,31 @@
     transform: translate(165%);
 }
 
+.hidden_Expert5 img {
+    width: 15vw;
+    height: 30vh;
+    border-radius: 20px 0;
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.28),
+        0 6px 14px rgba(0, 0, 0, 0.16);
+}
+
+.hidden_Expert5 {
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.6s ease;
+    position: absolute;
+    left: 0%;
+    margin-left: 3vw;
+    transform: scale(0.01, 0.01);
+}
+
+.Expert5:hover .hidden_Expert5 {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(140%);
+}
+
 @media (max-width: 900px) {
     .experts_container {
         margin-top: 12vh;
@@ -246,19 +279,31 @@
     .Expert1,
     .Expert2,
     .Expert3,
-    .Expert4 {
+    .Expert4,
+    .Expert5 {
         width: min(280px, 80vw);
         margin: 0;
         font-size: 32px;
+        display: block;
     }
 
     .Expert1 img,
     .Expert2 img,
     .Expert3 img,
-    .Expert4 img {
+    .Expert4 img,
+    .Expert5 img {
         width: 64px;
         height: 64px;
         object-fit: contain;
+    }
+
+    .Expert1 > img,
+    .Expert2 > img,
+    .Expert3 > img,
+    .Expert4 > img,
+    .Expert5 > img {
+        display: block;
+        margin: 14px auto 0;
     }
 
     .hidden_content,
@@ -278,6 +323,27 @@
         margin-right: 16px;
     }
 
+    .Expert1 .hidden_content,
+    .Expert1 .hidden_content2,
+    .Expert2 .hidden_content,
+    .Expert2 .hidden_content2,
+    .Expert3 .hidden_content,
+    .Expert3 .hidden_content2,
+    .Expert4 .hidden_content,
+    .Expert4 .hidden_content2,
+    .Expert5 .hidden_content,
+    .Expert5 .hidden_content2 {
+        display: inline-flex;
+    }
+
+    .Expert1 .hidden_content2,
+    .Expert2 .hidden_content2,
+    .Expert3 .hidden_content2,
+    .Expert4 .hidden_content2,
+    .Expert5 .hidden_content2 {
+        margin-top: 14px;
+    }
+
     .hidden_content img,
     .hidden_content2 img {
         width: 44px;
@@ -292,14 +358,17 @@
     .Expert3:hover .hidden_content,
     .Expert3:hover .hidden_content2,
     .Expert4:hover .hidden_content,
-    .Expert4:hover .hidden_content2 {
+    .Expert4:hover .hidden_content2,
+    .Expert5:hover .hidden_content,
+    .Expert5:hover .hidden_content2 {
         transform: none;
     }
 
     .hidden_Expert1,
     .hidden_Expert2,
     .hidden_Expert3,
-    .hidden_Expert4 {
+    .hidden_Expert4,
+    .hidden_Expert5 {
         opacity: 1;
         visibility: visible;
         position: static;
@@ -310,7 +379,8 @@
     .hidden_Expert1 img,
     .hidden_Expert2 img,
     .hidden_Expert3 img,
-    .hidden_Expert4 img {
+    .hidden_Expert4 img,
+    .hidden_Expert5 img {
         width: min(280px, 80vw);
         height: auto;
         max-height: none;
@@ -319,7 +389,8 @@
     .Expert1:hover .hidden_Expert1,
     .Expert2:hover .hidden_Expert2,
     .Expert3:hover .hidden_Expert3,
-    .Expert4:hover .hidden_Expert4 {
+    .Expert4:hover .hidden_Expert4,
+    .Expert5:hover .hidden_Expert5 {
         transform: none;
     }
 }
